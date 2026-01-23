@@ -8,12 +8,12 @@ import base64
 from pathlib import Path
 
 from template_mcp_server.utils.pylogger import get_python_logger
-from template_mcp_server.utils.toon_utils import to_toon
+from template_mcp_server.utils.toon_utils import format_response
 
 logger = get_python_logger()
 
 
-async def get_redhat_logo() -> str:
+async def get_redhat_logo():
     """Return the Red Hat logo as a base64 encoded string.
 
     TOOL_NAME=get_redhat_logo
@@ -60,7 +60,7 @@ async def get_redhat_logo() -> str:
 
         logger.info("Successfully read and encoded Red Hat logo")
 
-        return to_toon(
+        return format_response(
             {
                 "status": "success",
                 "operation": "get_redhat_logo",
@@ -76,7 +76,7 @@ async def get_redhat_logo() -> str:
     except FileNotFoundError:
         error_msg = f"Could not find logo file at {logo_path}"
         logger.error(error_msg)
-        return to_toon(
+        return format_response(
             {
                 "status": "error",
                 "operation": "get_redhat_logo",
@@ -87,7 +87,7 @@ async def get_redhat_logo() -> str:
     except PermissionError:
         error_msg = f"Permission denied reading logo file at {logo_path}"
         logger.error(error_msg)
-        return to_toon(
+        return format_response(
             {
                 "status": "error",
                 "operation": "get_redhat_logo",
@@ -98,7 +98,7 @@ async def get_redhat_logo() -> str:
     except Exception as e:
         error_msg = f"Error reading logo file: {str(e)}"
         logger.error(error_msg)
-        return to_toon(
+        return format_response(
             {
                 "status": "error",
                 "operation": "get_redhat_logo",

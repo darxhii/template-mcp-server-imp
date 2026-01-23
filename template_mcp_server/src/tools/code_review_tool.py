@@ -5,7 +5,7 @@ for various programming languages as an MCP tool.
 """
 
 from template_mcp_server.utils.pylogger import get_python_logger
-from template_mcp_server.utils.toon_utils import to_toon
+from template_mcp_server.utils.toon_utils import format_response
 
 logger = get_python_logger()
 
@@ -13,7 +13,7 @@ logger = get_python_logger()
 async def generate_code_review_prompt(
     code: str,
     language: str = "python",
-) -> str:
+):
     """Generate a structured code review prompt with comprehensive metadata.
 
     TOOL_NAME=generate_code_review_prompt
@@ -21,7 +21,7 @@ async def generate_code_review_prompt(
     USECASE=Analyze code for quality, bugs, and improvements using external AI service
     INSTRUCTIONS=1. Provide source code as string, 2. Specify programming language, 3. Receive formatted review prompt
     INPUT_DESCRIPTION=code (string): source code to review, language (string, optional): programming language (default: "python")
-    OUTPUT_DESCRIPTION=TOON-formatted string with status, operation, language, formatted prompt text, and message
+    OUTPUT_DESCRIPTION=Response with status, operation, language, formatted prompt text, and message (TOON format if enabled)
     EXAMPLES=generate_code_review_prompt("def hello(): print('world')", "python")
     PREREQUISITES=Have source code ready for analysis
     RELATED_TOOLS=None - generates prompts for external AI analysis
@@ -30,14 +30,15 @@ async def generate_code_review_prompt(
 
     Creates a structured prompt for code review that can be used with
     language models to analyze code quality, identify issues, and suggest
-    improvements. Returns data in TOON format for 30-60% token reduction.
+    improvements. Returns data in TOON format (if ENABLE_TOON_FORMAT=True)
+    for 30-60% token reduction, otherwise returns standard JSON/dict format.
 
     Args:
         code: The source code to be reviewed.
         language: Programming language of the code (default: "python").
 
     Returns:
-        str: TOON-formatted string containing the code review prompt and metadata.
+        TOON-formatted string (if enabled) or dict containing the code review prompt and metadata.
     """
     try:
         # Validate inputs
@@ -62,7 +63,7 @@ Focus on:
 - Performance considerations
 """
 
-        return to_toon(
+        return format_response(
             {
                 "status": "success",
                 "operation": "code_review_prompt",
@@ -74,7 +75,7 @@ Focus on:
 
     except Exception as e:
         logger.error(f"Error in code review tool: {e}")
-        return to_toon(
+        return format_response(
             {
                 "status": "error",
                 "error": str(e),

@@ -5,7 +5,11 @@ which reduces token usage by 30-60% compared to JSON while maintaining
 full data fidelity and human readability.
 """
 
+from typing import Union
+
 import toon_format
+
+from template_mcp_server.src.settings import settings
 
 
 def to_toon(data: dict | list | str | int | float | bool | None) -> str:
@@ -45,3 +49,31 @@ def from_toon(toon_str: str) -> dict | list | str | int | float | bool | None:
 
     """
     return toon_format.decode(toon_str)
+
+
+def format_response(
+    data: dict | list | str | int | float | bool | None,
+) -> Union[str, dict, list, int, float, bool, None]:
+    r"""Conditionally format response based on ENABLE_TOON_FORMAT setting.
+
+    If ENABLE_TOON_FORMAT is True, returns TOON-formatted string.
+    Otherwise, returns the original data structure (typically converted to JSON by FastAPI).
+
+    Args:
+        data: Python object to format
+
+    Returns:
+        TOON-formatted string if enabled, otherwise original data structure
+
+    Examples:
+        >>> # When ENABLE_TOON_FORMAT=True
+        >>> format_response({"status": "success", "result": 42})
+        'status: success\\nresult: 42'
+
+        >>> # When ENABLE_TOON_FORMAT=False
+        >>> format_response({"status": "success", "result": 42})
+        {'status': 'success', 'result': 42}
+    """
+    if settings.ENABLE_TOON_FORMAT:
+        return to_toon(data)
+    return data
