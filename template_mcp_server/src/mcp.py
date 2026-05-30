@@ -11,6 +11,11 @@ from template_mcp_server.src.tools.bmi_tool import calculate_bmi
 from template_mcp_server.src.tools.email_tool import (
     send_email,
 )
+from template_mcp_server.src.tools.rag_tool import (
+    research_rag_clear_story,
+    research_rag_ingest_search_results,
+    research_rag_query,
+)
 from template_mcp_server.src.tools.web_search_tool import search_web
 from template_mcp_server.utils.pylogger import (
     force_reconfigure_all_loggers,
@@ -58,3 +63,6 @@ class TemplateMCPServer:
         self.mcp.tool()(calculate_bmi)
         self.mcp.tool()(search_web)
         self.mcp.tool()(send_email)
+        self.mcp.tool()(research_rag_ingest_search_results)
+        self.mcp.tool()(research_rag_query)
+        self.mcp.tool()(research_rag_clear_story)

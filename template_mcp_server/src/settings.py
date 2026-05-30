@@ -344,6 +344,49 @@ class Settings(BaseSettings):
         },
     )
 
+    # RAG (Chroma) — per-story research chunks for query-time retrieval
+    RAG_ENABLED: bool = Field(
+        default=True,
+        json_schema_extra={
+            "env": "RAG_ENABLED",
+            "description": "Enable research_rag_* MCP tools",
+        },
+    )
+    RAG_CHROMA_PERSIST_DIR: str = Field(
+        default=".chroma_journalism",
+        json_schema_extra={
+            "env": "RAG_CHROMA_PERSIST_DIR",
+            "description": "Directory for persistent ChromaDB storage",
+        },
+    )
+    RAG_CHUNK_CHARS: int = Field(
+        default=2000,
+        ge=200,
+        le=20000,
+        json_schema_extra={
+            "env": "RAG_CHUNK_CHARS",
+            "description": "Approximate max characters per indexed chunk (~500 tokens)",
+        },
+    )
+    RAG_CHUNK_OVERLAP_CHARS: int = Field(
+        default=200,
+        ge=0,
+        le=2000,
+        json_schema_extra={
+            "env": "RAG_CHUNK_OVERLAP_CHARS",
+            "description": "Character overlap between consecutive chunks",
+        },
+    )
+    RAG_MAX_TOP_K: int = Field(
+        default=10,
+        ge=1,
+        le=50,
+        json_schema_extra={
+            "env": "RAG_MAX_TOP_K",
+            "description": "Maximum top_k for research_rag_query",
+        },
+    )
+
 
 def validate_config(settings: Settings) -> None:
     """Validate configuration settings.
